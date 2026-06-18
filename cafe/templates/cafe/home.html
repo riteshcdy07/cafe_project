@@ -1,0 +1,796 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Cafe Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff7ed;
+            color: #1f2937;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            background: #f97316;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.25);
+        }
+
+        .logo h2 {
+            font-size: 22px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: #4b5563;
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .nav a:hover,
+        .nav .active {
+            background: #f97316;
+            color: white;
+            transform: translateX(6px);
+        }
+
+        .sidebar-box {
+            margin-top: 60px;
+            background: #ffedd5;
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .sidebar-box h4 {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-box p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 280px;
+            padding: 35px;
+            width: calc(100% - 280px);
+            animation: pageFade 0.5s ease-in-out;
+        }
+
+        @keyframes pageFade {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .welcome p {
+            color: #f97316;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .welcome h1 {
+            font-size: 38px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-input {
+            width: 320px;
+            padding: 14px 18px;
+            border: none;
+            outline: none;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        }
+
+        .notification {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 28px;
+            margin-bottom: 35px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%);
+            border-radius: 30px;
+            padding: 55px;
+            min-height: 430px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            border-radius: 50%;
+            background: rgba(249, 115, 22, 0.08);
+            right: -80px;
+            top: -80px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffedd5;
+            color: #f97316;
+            font-weight: bold;
+            padding: 12px 18px;
+            border-radius: 30px;
+            margin-bottom: 28px;
+        }
+
+        .hero-card h2 {
+            font-size: 52px;
+            line-height: 1.15;
+            color: #111827;
+            max-width: 750px;
+            margin-bottom: 24px;
+        }
+
+        .hero-card h2 span {
+            color: #f97316;
+        }
+
+        .hero-card p {
+            color: #6b7280;
+            font-size: 18px;
+            line-height: 1.7;
+            max-width: 760px;
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+        }
+
+        .hero-points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.hero-points span {
+    background: white;
+    color: #f97316;
+    border: 1px solid #fed7aa;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+        .primary-btn,
+        .secondary-btn {
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 16px;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .primary-btn {
+            background: #f97316;
+            color: white;
+            box-shadow: 0 10px 24px rgba(249, 115, 22, 0.28);
+        }
+
+        .secondary-btn {
+            background: white;
+            color: #f97316;
+            border: 2px solid #f97316;
+        }
+
+        .primary-btn:hover,
+        .secondary-btn:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Right Coffee Card */
+.coffee-preview {
+    background: white;
+    border-radius: 30px;
+    min-height: 430px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    overflow: hidden;
+    animation: cardPop 0.6s ease-in-out;
+    padding: 0;
+    display: flex;
+}
+
+.coffee-full-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    animation: imageZoom 4s ease-in-out infinite;
+}
+
+@keyframes imageZoom {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.04);
+    }
+}
+@keyframes imagePop {
+    from {
+        opacity: 0;
+        transform: scale(0.85) rotate(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes floatCup {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+        .coffee-preview h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .coffee-preview p {
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        @keyframes cardPop {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 26px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            border: 1px solid #ffedd5;
+            transition: 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.12);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .stat-card h2 {
+            color: #f97316;
+            font-size: 30px;
+            margin-top: 8px;
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            background: #ffedd5;
+            color: #f97316;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        /* Section Titles */
+        .section-title {
+            margin-bottom: 22px;
+        }
+
+        .section-title h2 {
+            font-size: 30px;
+            margin-bottom: 6px;
+        }
+
+        .section-title p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* System Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-bottom: 35px;
+        }
+
+        .module-card {
+            background: white;
+            padding: 28px;
+            border-radius: 28px;
+            text-decoration: none;
+            color: #1f2937;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            border: 1px solid #ffedd5;
+            transition: 0.3s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 30px rgba(249, 115, 22, 0.14);
+            border-color: #f97316;
+        }
+
+        .module-icon {
+            width: 62px;
+            height: 62px;
+            background: #ffedd5;
+            color: #f97316;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 18px;
+        }
+
+        .module-card h3 {
+            font-size: 21px;
+            margin-bottom: 10px;
+        }
+
+        .module-card p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Workflow */
+        .workflow {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .step-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            padding: 20px;
+            border-radius: 22px;
+            text-align: center;
+            transition: 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            width: 42px;
+            height: 42px;
+            background: #f97316;
+            color: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            font-weight: bold;
+        }
+
+        .step-card h4 {
+            margin-bottom: 6px;
+        }
+
+        .step-card p {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        @media(max-width: 1200px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modules-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .workflow-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        @media(max-width: 650px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 18px;
+            }
+
+            .top-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .hero-card {
+                padding: 32px;
+            }
+
+            .hero-card h2 {
+                font-size: 34px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .stats-grid,
+            .modules-grid,
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">☕</div>
+            <div>
+                <h2>CafePro</h2>
+                <p>Management System</p>
+            </div>
+        </div>
+
+        <div class="nav">
+            <a href="{% url 'home' %}" class="active">🏠 Home</a>
+            <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+            <a href="{% url 'orders' %}">🛒 Orders</a>
+            <a href="{% url 'menu' %}">☕ Menu</a>
+            <a href="{% url 'billing' %}">🧾 Billing</a>
+            <a href="{% url 'inventory' %}">📦 Inventory</a>
+            <a href="{% url 'staff' %}">👥 Staff</a>
+            <a href="{% url 'reports' %}">📈 Reports</a>
+            <a href="/admin/">⚙ Admin Panel</a>
+        </div>
+
+        <div class="sidebar-box">
+            <h4>Smart Cafe System</h4>
+            <p>Simple, clean, and modern interface for managing cafe operations.</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="welcome">
+                <p>Welcome to CafePro</p>
+                <h1>Home</h1>
+            </div>
+
+            <div class="top-actions">
+                <input type="text" class="search-input" placeholder="Search modules...">
+                <div class="notification">🔔</div>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <section class="hero-section">
+
+            <div class="hero-card">
+                <div class="hero-badge">☕ Cafe Management System</div>
+
+                <h2>
+                    Manage Your <span>Cafe</span> Easily and Professionally
+                </h2>
+
+                <p>
+                    A modern system interface designed for managing menu items, orders,
+                    billing, inventory, staff, and reports in one place.
+                </p>
+
+
+                <div class="hero-points">
+    <span>✓ Fast Order Management</span>
+    <span>✓ Easy Billing System</span>
+    <span>✓ Inventory & Staff Tracking</span>
+</div>
+
+                <div class="hero-buttons">
+                    <a href="{% url 'dashboard' %}" class="primary-btn">Go to Dashboard</a>
+                    <a href="#modules" class="secondary-btn">Explore Modules</a>
+                </div>
+            </div>
+
+<div class="coffee-preview">
+    <img src="{% static 'cafe/images/coffee.png' %}" alt="Coffee Cup" class="coffee-full-image">
+</div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div>
+                        <p>Menu Items</p>
+                        <h2>{{ total_menu }}</h2>
+                    </div>
+                    <div class="stat-icon">☕</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div>
+                        <p>Total Orders</p>
+                        <h2>{{ total_orders }}</h2>
+                    </div>
+                    <div class="stat-icon">🛒</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div>
+                        <p>Total Bills</p>
+                        <h2>{{ total_bills }}</h2>
+                    </div>
+                    <div class="stat-icon">🧾</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div>
+                        <p>Staff Members</p>
+                        <h2>{{ total_staff }}</h2>
+                    </div>
+                    <div class="stat-icon">👥</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modules -->
+        <div class="section-title" id="modules">
+            <h2>System Modules</h2>
+            <p>Main sections included in the Cafe Management System.</p>
+        </div>
+
+        <section class="modules-grid">
+            <a href="{% url 'orders' %}" class="module-card">
+                <div class="module-icon">🛒</div>
+                <h3>Order Management</h3>
+                <p>Create, update, and track customer orders with status and quantity.</p>
+            </a>
+
+            <a href="{% url 'menu' %}" class="module-card">
+                <div class="module-icon">☕</div>
+                <h3>Menu Management</h3>
+                <p>Add menu items with price, category, availability, description, and image.</p>
+            </a>
+
+            <a href="{% url 'billing' %}" class="module-card">
+                <div class="module-icon">🧾</div>
+                <h3>Billing System</h3>
+                <p>Generate bills from orders with payment method, discount, and tax.</p>
+            </a>
+
+            <a href="{% url 'inventory' %}" class="module-card">
+                <div class="module-icon">📦</div>
+                <h3>Inventory Control</h3>
+                <p>Manage ingredients, packaging, drink stock, suppliers, and stock alerts.</p>
+            </a>
+
+            <a href="{% url 'staff' %}" class="module-card">
+                <div class="module-icon">👥</div>
+                <h3>Staff Management</h3>
+                <p>Store employee information, salary, contact, shift, and role details.</p>
+            </a>
+
+            <a href="{% url 'reports' %}" class="module-card">
+                <div class="module-icon">📈</div>
+                <h3>Reports</h3>
+                <p>View summaries for sales, orders, staff, inventory, and billing records.</p>
+            </a>
+        </section>
+
+        <!-- Workflow -->
+        <section class="workflow">
+            <div class="section-title">
+                <h2>System Workflow</h2>
+                <p>Basic working flow of the cafe management system.</p>
+            </div>
+
+            <div class="workflow-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4>Add Menu</h4>
+                    <p>Create food and drink items.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4>Create Order</h4>
+                    <p>Select customer order items.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4>Generate Bill</h4>
+                    <p>Create payment records.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h4>Manage Stock</h4>
+                    <p>Track cafe inventory items.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <h4>View Reports</h4>
+                    <p>Check system summaries.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

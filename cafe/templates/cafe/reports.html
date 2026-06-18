@@ -1,0 +1,1611 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports - Cafe Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff7ed;
+            color: #1f2937;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            background: #f97316;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: #4b5563;
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .nav a:hover,
+        .nav .active {
+            background: #f97316;
+            color: white;
+            transform: translateX(6px);
+        }
+
+        .sidebar-box {
+            margin-top: 60px;
+            background: #ffedd5;
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .sidebar-box h4 {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-box p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 280px;
+            padding: 35px;
+            width: calc(100% - 280px);
+            animation: pageFade 0.5s ease-in-out;
+        }
+
+        @keyframes pageFade {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .welcome p {
+            color: #f97316;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .welcome h1 {
+            font-size: 36px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 14px 18px;
+            border: none;
+            outline: none;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+            color: #4b5563;
+        }
+
+        .export-btn {
+            text-decoration: none;
+            background: #f97316;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+            transition: 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.28);
+        }
+
+        /* Report Tabs */
+        .report-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .report-tabs a {
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 18px;
+            background: white;
+            color: #4b5563;
+            font-weight: bold;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            transition: 0.3s ease;
+        }
+
+        .report-tabs a.active,
+        .report-tabs a:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Sales Summary Cards */
+        .report-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 24px;
+            border-radius: 26px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            border: 1px solid #ffedd5;
+            transition: 0.3s ease;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.12);
+        }
+
+        .summary-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .summary-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .summary-card h2 {
+            margin-top: 8px;
+            font-size: 27px;
+            color: #f97316;
+        }
+
+        .summary-icon {
+            background: #ffedd5;
+            color: #f97316;
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        @keyframes cardPop {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Layout */
+        .report-layout {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .panel-title h2 {
+            font-size: 24px;
+        }
+
+        .small-filter {
+            padding: 10px 14px;
+            border: 1px solid #fed7aa;
+            border-radius: 14px;
+            outline: none;
+            color: #6b7280;
+            background: #fff7ed;
+        }
+
+        /* Chart */
+        .chart-box {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 24px;
+            padding: 25px;
+            min-height: 330px;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 48px;
+            background: linear-gradient(180deg, #f97316, #fed7aa);
+            border-radius: 14px 14px 0 0;
+            animation: growBar 0.8s ease-in-out;
+        }
+
+        @keyframes growBar {
+            from {
+                height: 0;
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .bar.one {
+            height: 120px;
+        }
+
+        .bar.two {
+            height: 180px;
+        }
+
+        .bar.three {
+            height: 145px;
+        }
+
+        .bar.four {
+            height: 220px;
+        }
+
+        .bar.five {
+            height: 165px;
+        }
+
+        .bar.six {
+            height: 255px;
+        }
+
+        .bar-label {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* Report Categories */
+        .report-type-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .report-type {
+            background: #fff7ed;
+            padding: 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid #ffedd5;
+            transition: 0.3s ease;
+        }
+
+        .report-type:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 24px rgba(249, 115, 22, 0.14);
+            border-color: #f97316;
+        }
+
+        .report-type .icon {
+            width: 50px;
+            height: 50px;
+            background: #ffedd5;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f97316;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .report-type h3 {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .report-type p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Billing Report Cards */
+        .report-card-panel {
+            margin-top: 25px;
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .bill-report-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(240px, 1fr));
+            gap: 22px;
+        }
+
+        .bill-report-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 24px;
+            padding: 18px;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s ease;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .bill-report-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.18);
+            border-color: #f97316;
+        }
+
+        .bill-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .bill-icon {
+            width: 60px;
+            height: 60px;
+            background: #ffedd5;
+            color: #f97316;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .payment-badge {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .bill-info {
+            margin-top: 16px;
+        }
+
+        .bill-info h3 {
+            font-size: 20px;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .bill-info p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .bill-info strong {
+            color: #f97316;
+        }
+
+        .bill-total {
+            background: white;
+            padding: 14px;
+            border-radius: 16px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #f97316;
+        }
+
+        .small-btn {
+            display: block;
+            text-align: center;
+            padding: 11px;
+            border-radius: 14px;
+            background: white;
+            color: #f97316;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s ease;
+            margin-top: 14px;
+        }
+
+        .small-btn:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .empty-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 24px;
+            padding: 35px;
+            text-align: center;
+            grid-column: 1 / -1;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .empty-card h3 {
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .empty-card p {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        @media print {
+            .sidebar,
+            .top-actions,
+            .report-tabs,
+            .small-filter,
+            .small-btn {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 10px;
+            }
+
+            body {
+                background: white;
+            }
+
+            .panel,
+            .summary-card,
+            .report-card-panel {
+                box-shadow: none;
+            }
+        }
+
+        @media(max-width: 1100px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .report-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .report-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bill-report-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 750px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 18px;
+            }
+
+            .top-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .filter-input,
+            .filter-select,
+            .export-btn {
+                width: 100%;
+            }
+
+            .report-cards,
+            .bill-report-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-box {
+                min-height: 250px;
+                gap: 8px;
+            }
+
+            .bar {
+                max-width: 35px;
+            }
+
+            .panel-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .small-filter {
+                width: 100%;
+            }
+        }
+
+<!--        report section-->
+       /* Order Report */
+.report-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.cancelled-count {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 11px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.order-report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: 22px;
+}
+
+.order-report-card {
+    background: #fff7ed;
+    border: 1px dashed #fdba74;
+    border-radius: 24px;
+    padding: 18px;
+    transition: 0.3s ease;
+    animation: cardPop 0.5s ease-in-out;
+}
+
+.order-report-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.16);
+    border-color: #f97316;
+}
+
+.order-report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.order-icon {
+    width: 58px;
+    height: 58px;
+    background: #ffedd5;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.order-badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.order-badge.pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.order-badge.preparing {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.order-badge.completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.order-badge.cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.order-report-info h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.order-report-info p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.order-report-info strong {
+    color: #f97316;
+}
+
+.order-total {
+    background: white;
+    padding: 14px;
+    border-radius: 15px;
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    color: #f97316;
+    font-weight: bold;
+}
+
+@media(max-width: 1100px) {
+    .order-report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+<!--        report of inventory css-->
+
+        /* Inventory Report */
+.inventory-report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    gap: 22px;
+}
+
+.inventory-report-card {
+    background: #fff7ed;
+    border: 1px dashed #fdba74;
+    border-radius: 24px;
+    padding: 18px;
+    transition: 0.3s ease;
+    animation: cardPop 0.5s ease-in-out;
+}
+
+.inventory-report-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.16);
+    border-color: #f97316;
+}
+
+.inventory-report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.inventory-icon {
+    width: 58px;
+    height: 58px;
+    background: #ffedd5;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.inventory-badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.inventory-badge.available {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.inventory-badge.low-stock {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.inventory-badge.out-stock {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.inventory-report-info h3 {
+    font-size: 20px;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
+
+.inventory-report-info p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.inventory-report-info strong {
+    color: #f97316;
+}
+
+.inventory-note {
+    margin-top: 14px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media(max-width: 1100px) {
+    .inventory-report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+<!--        for staff reporrts-->
+
+        /* Staff Report */
+.staff-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.staff-report-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    gap: 22px;
+}
+
+.staff-report-card {
+    background: #fff7ed;
+    border: 1px dashed #fdba74;
+    border-radius: 24px;
+    padding: 18px;
+    transition: 0.3s ease;
+    animation: cardPop 0.5s ease-in-out;
+}
+
+.staff-report-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.16);
+    border-color: #f97316;
+}
+
+.staff-report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.staff-icon {
+    width: 58px;
+    height: 58px;
+    background: #ffedd5;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.staff-role-badge {
+    background: #ffedd5;
+    color: #f97316;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.staff-report-info h3 {
+    font-size: 20px;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
+
+.staff-report-info p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.staff-report-info strong {
+    color: #f97316;
+}
+
+.salary-box {
+    margin-top: 14px;
+    background: white;
+    border-radius: 15px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.salary-box strong {
+    color: #f97316;
+    font-size: 16px;
+}
+
+@media(max-width: 1250px) {
+    .staff-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 1100px) {
+    .staff-report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 750px) {
+    .staff-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">☕</div>
+            <div>
+                <h2>CafePro</h2>
+                <p>Management System</p>
+            </div>
+        </div>
+
+        <div class="nav">
+            <a href="{% url 'home' %}">🏠 Home</a>
+            <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+            <a href="{% url 'orders' %}">🛒 Orders</a>
+            <a href="{% url 'menu' %}">☕ Menu</a>
+            <a href="{% url 'billing' %}">🧾 Billing</a>
+            <a href="{% url 'inventory' %}">📦 Inventory</a>
+            <a href="{% url 'staff' %}">👥 Staff</a>
+            <a href="{% url 'reports' %}" class="active">📈 Reports</a>
+            <a href="/admin/">⚙ Admin Panel</a>
+        </div>
+
+        <div class="sidebar-box">
+            <h4>Reports Panel</h4>
+            <p>View sales, orders, inventory, staff, and billing report summaries.</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="welcome">
+                <p>Reports & Analytics</p>
+                <h1>Reports</h1>
+            </div>
+
+            <div class="top-actions">
+                <input type="date" class="filter-input">
+
+                <select class="filter-select">
+                    <option>Report Type</option>
+                    <option>Sales Report</option>
+                    <option>Order Report</option>
+                    <option>Inventory Report</option>
+                    <option>Staff Report</option>
+                </select>
+
+                <button type="button" class="export-btn" onclick="window.print()">
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Report Tabs -->
+       <!-- Report Tabs -->
+<div class="report-tabs">
+    <a href="{% url 'reports' %}?tab=Overview"
+       class="{% if selected_tab == 'Overview' %}active{% endif %}">
+        Overview
+    </a>
+
+    <a href="{% url 'reports' %}?tab=Sales"
+       class="{% if selected_tab == 'Sales' %}active{% endif %}">
+        Sales
+    </a>
+
+    <a href="{% url 'reports' %}?tab=Orders"
+       class="{% if selected_tab == 'Orders' %}active{% endif %}">
+        Orders
+    </a>
+
+    <a href="{% url 'reports' %}?tab=Inventory"
+       class="{% if selected_tab == 'Inventory' %}active{% endif %}">
+        Inventory
+    </a>
+
+    <a href="{% url 'reports' %}?tab=Staff"
+       class="{% if selected_tab == 'Staff' %}active{% endif %}">
+        Staff
+    </a>
+</div>
+{% if selected_tab == "Overview" or selected_tab == "Sales" %}
+        <!-- Real Sales Summary Cards -->
+        <section class="report-cards">
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <p>Total Sales</p>
+                        <h2>Rs. {{ total_sales }}</h2>
+                    </div>
+                    <div class="summary-icon">💰</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <p>Total Bills</p>
+                        <h2>{{ total_bills }}</h2>
+                    </div>
+                    <div class="summary-icon">🧾</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <p>Cash Sales</p>
+                        <h2>Rs. {{ cash_sales }}</h2>
+                    </div>
+                    <div class="summary-icon">💵</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <p>QR Payment Sales</p>
+                        <h2>Rs. {{ qr_sales }}</h2>
+                    </div>
+                    <div class="summary-icon">📱</div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+        {% if selected_tab == "Overview" %}
+        <!-- Report Layout -->
+        <section class="report-layout">
+
+            <!-- Chart Panel -->
+            <div class="panel">
+                <div class="panel-title">
+                    <h2>Report Overview</h2>
+
+                    <select class="small-filter">
+                        <option>This Week</option>
+                        <option>This Month</option>
+                        <option>This Year</option>
+                    </select>
+                </div>
+
+                <div class="chart-box">
+                    <div class="bar-group">
+                        <div class="bar one"></div>
+                        <span class="bar-label">Orders</span>
+                    </div>
+
+                    <div class="bar-group">
+                        <div class="bar two"></div>
+                        <span class="bar-label">Menu</span>
+                    </div>
+
+                    <div class="bar-group">
+                        <div class="bar three"></div>
+                        <span class="bar-label">Stock</span>
+                    </div>
+
+                    <div class="bar-group">
+                        <div class="bar four"></div>
+                        <span class="bar-label">Bills</span>
+                    </div>
+
+                    <div class="bar-group">
+                        <div class="bar five"></div>
+                        <span class="bar-label">Staff</span>
+                    </div>
+
+                    <div class="bar-group">
+                        <div class="bar six"></div>
+                        <span class="bar-label">Sales</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Categories -->
+            <div class="panel">
+                <div class="panel-title">
+                    <h2>Report Categories</h2>
+                </div>
+
+                <div class="report-type-list">
+                    <div class="report-type">
+                        <div class="icon">💰</div>
+                        <div>
+                            <h3>Sales Report</h3>
+                            <p>View billing and payment summary.</p>
+                        </div>
+                    </div>
+
+                    <div class="report-type">
+                        <div class="icon">🛒</div>
+                        <div>
+                            <h3>Order Report</h3>
+                            <p>Total orders and customer order records.</p>
+                        </div>
+                    </div>
+
+                    <div class="report-type">
+                        <div class="icon">📦</div>
+                        <div>
+                            <h3>Inventory Report</h3>
+                            <p>Stock level and inventory item summary.</p>
+                        </div>
+                    </div>
+
+                    <div class="report-type">
+                        <div class="icon">👥</div>
+                        <div>
+                            <h3>Staff Report</h3>
+                            <p>Staff count and employee records.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        {% endif %}
+ {% if selected_tab == "Sales" %}
+        <!-- Billing Report Cards -->
+        <section class="report-card-panel">
+            <div class="panel-title">
+                <h2>Billing Report Details</h2>
+
+
+                <select class="small-filter">
+                    <option>All Payments</option>
+                    <option>Cash</option>
+                    <option>Card</option>
+                    <option>QR Payment</option>
+                    <option>Online</option>
+                </select>
+            </div>
+
+            <div class="bill-report-grid">
+
+                {% for bill in bills %}
+                <div class="bill-report-card">
+                    <div>
+                        <div class="bill-top">
+                            <div class="bill-icon">🧾</div>
+                            <span class="payment-badge">{{ bill.payment_method }}</span>
+                        </div>
+
+                        <div class="bill-info">
+                            <h3>BILL-{{ bill.id }}</h3>
+                            <p><strong>Customer:</strong> {{ bill.customer_name }}</p>
+
+                            {% if bill.order %}
+                                <p><strong>Order:</strong> ORD-{{ bill.order.id }}</p>
+
+                                {% if bill.order.item %}
+                                    <p><strong>Item:</strong> {{ bill.order.item.item_name }}</p>
+                                    <p><strong>Quantity:</strong> {{ bill.order.quantity }}</p>
+                                {% else %}
+                                    <p><strong>Item:</strong> Item removed</p>
+                                {% endif %}
+                            {% else %}
+                                <p><strong>Order:</strong> No order selected</p>
+                            {% endif %}
+
+                            <p><strong>Date:</strong> {{ bill.created_at }}</p>
+
+                            <div class="bill-total">
+                                <span>Total</span>
+                                <span>Rs. {{ bill.total_amount }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'billing' %}" class="small-btn">View Report</a>
+                </div>
+
+                {% empty %}
+                <div class="empty-card">
+                    <div class="empty-icon">📈</div>
+                    <h3>No Report Data Yet</h3>
+                    <p>Billing report records will appear after bills are generated.</p>
+                </div>
+                {% endfor %}
+
+            </div>
+        </section>
+{% endif %}
+
+        {% if selected_tab == "Orders" %}
+
+<!-- Order Summary Cards -->
+<section class="report-cards">
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Total Orders</p>
+                <h2>{{ total_orders }}</h2>
+            </div>
+            <div class="summary-icon">🛒</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Pending</p>
+                <h2>{{ pending_orders }}</h2>
+            </div>
+            <div class="summary-icon">⏳</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Preparing</p>
+                <h2>{{ preparing_orders }}</h2>
+            </div>
+            <div class="summary-icon">👨‍🍳</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Completed</p>
+                <h2>{{ completed_orders }}</h2>
+            </div>
+            <div class="summary-icon">✅</div>
+        </div>
+    </div>
+</section>
+
+<!-- Order Report Details -->
+<section class="report-card-panel">
+    <div class="panel-title">
+        <div>
+            <h2>Order Report Details</h2>
+            <p class="report-subtitle">Customer orders and their current status.</p>
+        </div>
+
+        <div class="cancelled-count">
+            Cancelled: {{ cancelled_orders }}
+        </div>
+    </div>
+
+    <div class="order-report-grid">
+        {% for order in order_records %}
+            <div class="order-report-card">
+                <div class="order-report-top">
+                    <div class="order-icon">🛒</div>
+
+                    {% if order.status == "Pending" %}
+                        <span class="order-badge pending">{{ order.status }}</span>
+                    {% elif order.status == "Preparing" %}
+                        <span class="order-badge preparing">{{ order.status }}</span>
+                    {% elif order.status == "Completed" %}
+                        <span class="order-badge completed">{{ order.status }}</span>
+                    {% elif order.status == "Cancelled" %}
+                        <span class="order-badge cancelled">{{ order.status }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="order-report-info">
+                    <h3>ORD-{{ order.id }}</h3>
+                    <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Type:</strong> {{ order.order_type }}</p>
+
+                    {% if order.item %}
+                        <p><strong>Item:</strong> {{ order.item.item_name }}</p>
+                    {% else %}
+                        <p><strong>Item:</strong> Item removed</p>
+                    {% endif %}
+
+                    <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                    <p><strong>Date:</strong> {{ order.created_at }}</p>
+
+                    <div class="order-total">
+                        <span>Total</span>
+                        <span>Rs. {{ order.total_price }}</span>
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="empty-card">
+                <div class="empty-icon">🛒</div>
+                <h3>No Order Records Yet</h3>
+                <p>Created customer orders will appear here.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endif %}
+
+
+        {% if selected_tab == "Inventory" %}
+
+<!-- Inventory Summary Cards -->
+<section class="report-cards">
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Total Inventory Items</p>
+                <h2>{{ total_inventory }}</h2>
+            </div>
+            <div class="summary-icon">📦</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Available Stock</p>
+                <h2>{{ available_stock }}</h2>
+            </div>
+            <div class="summary-icon">✅</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Low Stock</p>
+                <h2>{{ low_stock }}</h2>
+            </div>
+            <div class="summary-icon">⚠️</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Out of Stock</p>
+                <h2>{{ out_of_stock }}</h2>
+            </div>
+            <div class="summary-icon">❌</div>
+        </div>
+    </div>
+</section>
+
+<!-- Inventory Report Details -->
+<section class="report-card-panel">
+    <div class="panel-title">
+        <div>
+            <h2>Inventory Report Details</h2>
+            <p class="report-subtitle">
+                Current stock levels and connected supplier information.
+            </p>
+        </div>
+    </div>
+
+    <div class="inventory-report-grid">
+        {% for item in inventory_items %}
+            <div class="inventory-report-card">
+                <div class="inventory-report-top">
+                    <div class="inventory-icon">📦</div>
+
+                    {% if item.status == "Available" %}
+                        <span class="inventory-badge available">{{ item.status }}</span>
+                    {% elif item.status == "Low Stock" %}
+                        <span class="inventory-badge low-stock">{{ item.status }}</span>
+                    {% elif item.status == "Out of Stock" %}
+                        <span class="inventory-badge out-stock">{{ item.status }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="inventory-report-info">
+                    <h3>{{ item.item_name }}</h3>
+
+                    <p><strong>Category:</strong> {{ item.category }}</p>
+                    <p><strong>Quantity:</strong> {{ item.quantity }} {{ item.unit }}</p>
+
+                    <p>
+                        <strong>Supplier:</strong>
+                        {% if item.supplier %}
+                            {{ item.supplier.supplier_name }}
+                        {% else %}
+                            Not selected
+                        {% endif %}
+                    </p>
+
+                    {% if item.note %}
+                        <div class="inventory-note">
+                            <strong>Note:</strong> {{ item.note }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="empty-card">
+                <div class="empty-icon">📦</div>
+                <h3>No Inventory Records Yet</h3>
+                <p>Stock items will appear here after they are added.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endif %}
+
+
+<!--        for staff -->
+        {% if selected_tab == "Staff" %}
+
+<!-- Staff Summary Cards -->
+<section class="staff-summary-grid">
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Total Staff</p>
+                <h2>{{ total_staff }}</h2>
+            </div>
+            <div class="summary-icon">👥</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Managers</p>
+                <h2>{{ managers }}</h2>
+            </div>
+            <div class="summary-icon">👔</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Cashiers</p>
+                <h2>{{ cashiers }}</h2>
+            </div>
+            <div class="summary-icon">💵</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Waiters</p>
+                <h2>{{ waiters }}</h2>
+            </div>
+            <div class="summary-icon">🍽️</div>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <div>
+                <p>Kitchen Staff</p>
+                <h2>{{ kitchen_staff }}</h2>
+            </div>
+            <div class="summary-icon">👨‍🍳</div>
+        </div>
+    </div>
+</section>
+
+<!-- Staff Report Details -->
+<section class="report-card-panel">
+    <div class="panel-title">
+        <div>
+            <h2>Staff Report Details</h2>
+            <p class="report-subtitle">
+                Employee roles, shifts, contact information and salary records.
+            </p>
+        </div>
+    </div>
+
+    <div class="staff-report-grid">
+        {% for staff in staff_members %}
+            <div class="staff-report-card">
+                <div class="staff-report-top">
+                    <div class="staff-icon">
+                        {% if staff.role == "Manager" %}
+                            👔
+                        {% elif staff.role == "Cashier" %}
+                            💵
+                        {% elif staff.role == "Waiter" %}
+                            🍽️
+                        {% elif staff.role == "Kitchen Staff" %}
+                            👨‍🍳
+                        {% else %}
+                            👤
+                        {% endif %}
+                    </div>
+
+                    <span class="staff-role-badge">{{ staff.role }}</span>
+                </div>
+
+                <div class="staff-report-info">
+                    <h3>{{ staff.staff_name }}</h3>
+
+                    <p><strong>Phone:</strong> {{ staff.phone }}</p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {% if staff.email %}
+                            {{ staff.email }}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                    </p>
+
+                    <p><strong>Shift:</strong> {{ staff.shift }}</p>
+
+                    <p>
+                        <strong>Address:</strong>
+                        {% if staff.address %}
+                            {{ staff.address }}
+                        {% else %}
+                            Not added
+                        {% endif %}
+                    </p>
+
+                    <div class="salary-box">
+                        <span>Salary</span>
+                        <strong>Rs. {{ staff.salary }}</strong>
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="empty-card">
+                <div class="empty-icon">👥</div>
+                <h3>No Staff Records Yet</h3>
+                <p>Employee records will appear here after staff are added.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endif %}
+    </main>
+
+</div>
+
+</body>
+</html>

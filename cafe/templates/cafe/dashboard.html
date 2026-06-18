@@ -1,0 +1,748 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Cafe Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff7ed;
+            color: #1f2937;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            background: #f97316;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: #4b5563;
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .nav a:hover,
+        .nav .active {
+            background: #f97316;
+            color: white;
+            transform: translateX(6px);
+        }
+
+        .sidebar-box {
+            margin-top: 60px;
+            background: #ffedd5;
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .sidebar-box h4 {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-box p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Main */
+        .main {
+            margin-left: 280px;
+            padding: 35px;
+            width: calc(100% - 280px);
+            animation: pageFade 0.5s ease-in-out;
+        }
+
+        @keyframes pageFade {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .welcome p {
+            color: #f97316;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .welcome h1 {
+            font-size: 38px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 320px;
+            padding: 14px 18px;
+            border: none;
+            outline: none;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        }
+
+        .quick-btn {
+            text-decoration: none;
+            background: #f97316;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: bold;
+            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+            transition: 0.3s ease;
+        }
+
+        .quick-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.28);
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 24px;
+            border-radius: 26px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            border: 1px solid #ffedd5;
+            transition: 0.3s ease;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        @keyframes cardPop {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .summary-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.14);
+        }
+
+        .summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .summary-card h2 {
+            margin-top: 10px;
+            font-size: 30px;
+            color: #f97316;
+        }
+
+        .summary-icon {
+            background: #ffedd5;
+            color: #f97316;
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        /* Main Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .panel-title h2 {
+            font-size: 24px;
+        }
+
+        .panel-title a {
+            color: #f97316;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Recent Order Cards */
+        .list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .list-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: center;
+            transition: 0.3s ease;
+        }
+
+        .list-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(249, 115, 22, 0.12);
+        }
+
+        .list-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .list-icon {
+            width: 52px;
+            height: 52px;
+            background: #ffedd5;
+            border-radius: 16px;
+            color: #f97316;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .list-card h3 {
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+
+        .list-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .badge {
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .preparing {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .completed {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .cancelled,
+        .danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .low {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-top: 25px;
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .action-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 22px;
+            padding: 20px;
+            text-decoration: none;
+            color: #1f2937;
+            transition: 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.14);
+            border-color: #f97316;
+        }
+
+        .action-icon {
+            width: 55px;
+            height: 55px;
+            background: #ffedd5;
+            border-radius: 18px;
+            color: #f97316;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 14px;
+        }
+
+        .action-card h3 {
+            margin-bottom: 8px;
+        }
+
+        .action-card p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .empty-box {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        @media(max-width: 1200px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        @media(max-width: 650px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .search-input,
+            .quick-btn {
+                width: 100%;
+            }
+
+            .summary-grid,
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .list-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">☕</div>
+            <div>
+                <h2>CafePro</h2>
+                <p>Management System</p>
+            </div>
+        </div>
+
+        <div class="nav">
+            <a href="{% url 'home' %}">🏠 Home</a>
+            <a href="{% url 'dashboard' %}" class="active">📊 Dashboard</a>
+            <a href="{% url 'orders' %}">🛒 Orders</a>
+            <a href="{% url 'menu' %}">☕ Menu</a>
+            <a href="{% url 'billing' %}">🧾 Billing</a>
+            <a href="{% url 'inventory' %}">📦 Inventory</a>
+            <a href="{% url 'staff' %}">👥 Staff</a>
+            <a href="{% url 'reports' %}">📈 Reports</a>
+            <a href="/admin/">⚙ Admin Panel</a>
+        </div>
+
+        <div class="sidebar-box">
+            <h4>Dashboard Panel</h4>
+            <p>View cafe overview, recent orders, sales, and stock alerts from one place.</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="welcome">
+                <p>Cafe Overview</p>
+                <h1>Dashboard</h1>
+            </div>
+
+            <div class="top-actions">
+                <input type="text" class="search-input" placeholder="Search dashboard...">
+                <a href="{% url 'orders' %}" class="quick-btn">+ New Order</a>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <section class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Total Orders</p>
+                        <h2>{{ total_orders }}</h2>
+                    </div>
+                    <div class="summary-icon">🛒</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Total Sales</p>
+                        <h2>Rs. {{ total_sales }}</h2>
+                    </div>
+                    <div class="summary-icon">💰</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Menu Items</p>
+                        <h2>{{ total_menu }}</h2>
+                    </div>
+                    <div class="summary-icon">☕</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Staff Members</p>
+                        <h2>{{ total_staff }}</h2>
+                    </div>
+                    <div class="summary-icon">👥</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Inventory Items</p>
+                        <h2>{{ total_inventory }}</h2>
+                    </div>
+                    <div class="summary-icon">📦</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Low Stock</p>
+                        <h2>{{ low_stock_count }}</h2>
+                    </div>
+                    <div class="summary-icon">⚠️</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Pending Orders</p>
+                        <h2>{{ pending_orders }}</h2>
+                    </div>
+                    <div class="summary-icon">⏳</div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-top">
+                    <div>
+                        <p>Completed Orders</p>
+                        <h2>{{ completed_orders }}</h2>
+                    </div>
+                    <div class="summary-icon">✅</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Main Grid -->
+        <section class="dashboard-grid">
+
+            <!-- Recent Orders -->
+            <div class="panel">
+                <div class="panel-title">
+                    <h2>Recent Orders</h2>
+                    <a href="{% url 'orders' %}">View All</a>
+                </div>
+
+                <div class="list">
+                    {% for order in recent_orders %}
+                    <div class="list-card">
+                        <div class="list-left">
+                            <div class="list-icon">🛒</div>
+                            <div>
+                                <h3>ORD-{{ order.id }} | {{ order.customer_name }}</h3>
+                                {% if order.item %}
+                                    <p>{{ order.item.item_name }} × {{ order.quantity }} | {{ order.order_type }}</p>
+                                {% else %}
+                                    <p>No item selected | {{ order.order_type }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if order.status == "Pending" %}
+                            <span class="badge pending">{{ order.status }}</span>
+                        {% elif order.status == "Preparing" %}
+                            <span class="badge preparing">{{ order.status }}</span>
+                        {% elif order.status == "Completed" %}
+                            <span class="badge completed">{{ order.status }}</span>
+                        {% elif order.status == "Cancelled" %}
+                            <span class="badge cancelled">{{ order.status }}</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="empty-box">
+                        No recent orders yet.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Stock Alerts -->
+            <div class="panel">
+                <div class="panel-title">
+                    <h2>Stock Alerts</h2>
+                    <a href="{% url 'inventory' %}">View Stock</a>
+                </div>
+
+                <div class="list">
+                    {% for item in stock_alerts %}
+                    <div class="list-card">
+                        <div class="list-left">
+                            <div class="list-icon">📦</div>
+                            <div>
+                                <h3>{{ item.item_name }}</h3>
+                                <p>{{ item.category }} | Qty: {{ item.quantity }} {{ item.unit }}</p>
+                            </div>
+                        </div>
+
+                        {% if item.status == "Low Stock" %}
+                            <span class="badge low">{{ item.status }}</span>
+                        {% elif item.status == "Out of Stock" %}
+                            <span class="badge danger">{{ item.status }}</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="empty-box">
+                        No low stock alerts.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Recent Bills -->
+        <section class="quick-actions">
+            <div class="panel-title">
+                <h2>Recent Bills</h2>
+                <a href="{% url 'billing' %}">View Billing</a>
+            </div>
+
+            <div class="list">
+                {% for bill in recent_bills %}
+                <div class="list-card">
+                    <div class="list-left">
+                        <div class="list-icon">🧾</div>
+                        <div>
+                            <h3>BILL-{{ bill.id }} | {{ bill.customer_name }}</h3>
+                            <p>{{ bill.payment_method }} | Total: Rs. {{ bill.total_amount }}</p>
+                        </div>
+                    </div>
+
+                    <span class="badge success">Paid</span>
+                </div>
+                {% empty %}
+                <div class="empty-box">
+                    No bills generated yet.
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <div class="panel-title">
+                <h2>Quick Actions</h2>
+            </div>
+
+            <div class="action-grid">
+                <a href="{% url 'orders' %}" class="action-card">
+                    <div class="action-icon">🛒</div>
+                    <h3>Create Order</h3>
+                    <p>Add new customer order and send it to order list.</p>
+                </a>
+
+                <a href="{% url 'menu' %}" class="action-card">
+                    <div class="action-icon">☕</div>
+                    <h3>Add Menu Item</h3>
+                    <p>Create cafe items with price, image, and category.</p>
+                </a>
+
+                <a href="{% url 'inventory' %}" class="action-card">
+                    <div class="action-icon">📦</div>
+                    <h3>Add Stock</h3>
+                    <p>Manage ingredients, packaging, and stock alerts.</p>
+                </a>
+
+                <a href="{% url 'billing' %}" class="action-card">
+                    <div class="action-icon">🧾</div>
+                    <h3>Generate Bill</h3>
+                    <p>Create customer bills and receipt records.</p>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

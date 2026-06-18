@@ -1,0 +1,216 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Bill</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff7ed;
+            color: #1f2937;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .edit-card {
+            width: 520px;
+            background: white;
+            border-radius: 28px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            animation: popIn 0.4s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .icon {
+            width: 70px;
+            height: 70px;
+            background: #ffedd5;
+            color: #f97316;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            margin: 0 auto 12px auto;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .bill-box {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .bill-box h3 {
+            color: #f97316;
+            margin-bottom: 6px;
+        }
+
+        .bill-box p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #fed7aa;
+            border-radius: 15px;
+            outline: none;
+            background: #fff7ed;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 90px;
+            resize: none;
+        }
+
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .save-btn,
+        .back-btn {
+            border: none;
+            text-decoration: none;
+            text-align: center;
+            padding: 14px;
+            border-radius: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size: 15px;
+        }
+
+        .save-btn {
+            background: #f97316;
+            color: white;
+        }
+
+        .back-btn {
+            background: #fff7ed;
+            color: #f97316;
+            border: 1px solid #fed7aa;
+        }
+
+        .save-btn:hover,
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.18);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="edit-card">
+    <div class="header">
+        <div class="icon">🧾</div>
+        <h1>Edit Bill</h1>
+        <p>Update bill, payment, discount, and tax details.</p>
+    </div>
+
+    <div class="bill-box">
+        <h3>BILL-{{ bill.id }}</h3>
+        <p>{{ bill.customer_name }} | {{ bill.payment_method }}</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Customer Name</label>
+            {{ form.customer_name }}
+        </div>
+
+        <div class="form-group">
+            <label>Select Order</label>
+            {{ form.order }}
+        </div>
+
+        <div class="form-group">
+            <label>Payment Method</label>
+            {{ form.payment_method }}
+        </div>
+
+        <div class="form-group">
+            <label>Discount</label>
+            {{ form.discount }}
+        </div>
+
+        <div class="form-group">
+            <label>Tax</label>
+            {{ form.tax }}
+        </div>
+
+        <div class="form-group">
+            <label>Billing Note</label>
+            {{ form.billing_note }}
+        </div>
+
+        <div class="button-row">
+            <button type="submit" class="save-btn">Save Changes</button>
+            <a href="{% url 'billing' %}" class="back-btn">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

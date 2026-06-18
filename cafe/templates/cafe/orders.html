@@ -1,0 +1,1864 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders - Cafe Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff7ed;
+            color: #1f2937;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            background: #f97316;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: #4b5563;
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .nav a:hover,
+        .nav .active {
+            background: #f97316;
+            color: white;
+            transform: translateX(6px);
+        }
+
+        .sidebar-box {
+            margin-top: 60px;
+            background: #ffedd5;
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .sidebar-box h4 {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-box p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .main {
+            margin-left: 280px;
+            padding: 35px;
+            width: calc(100% - 280px);
+            animation: pageFade 0.5s ease-in-out;
+        }
+
+        @keyframes pageFade {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardPop {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .welcome p {
+            color: #f97316;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .welcome h1 {
+            font-size: 36px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-input {
+            width: 300px;
+            padding: 14px 18px;
+            border: none;
+            outline: none;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        }
+
+        .add-btn {
+            text-decoration: none;
+            background: #f97316;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: bold;
+            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+            transition: 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.28);
+        }
+
+        .order-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .order-tabs a {
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 18px;
+            background: white;
+            color: #4b5563;
+            font-weight: bold;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            transition: 0.3s ease;
+        }
+
+        .order-tabs a.active,
+        .order-tabs a:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .panel {
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            gap: 15px;
+        }
+
+        .panel-title h2 {
+            font-size: 24px;
+        }
+
+        .filter {
+            padding: 10px 14px;
+            border: 1px solid #fed7aa;
+            border-radius: 14px;
+            outline: none;
+            color: #6b7280;
+            background: #fff7ed;
+        }
+
+        .pos-layout {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .quick-menu-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .quick-menu-search {
+            width: 280px;
+            padding: 12px 16px;
+            border: 1px solid #fed7aa;
+            border-radius: 15px;
+            outline: none;
+            background: #fff7ed;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .quick-menu-search:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+        }
+
+        .quick-menu-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .quick-tab {
+            border: none;
+            background: #fff7ed;
+            color: #4b5563;
+            padding: 11px 17px;
+            border-radius: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .quick-tab:hover,
+        .quick-tab.active {
+            background: #f97316;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .quick-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(300px, 1fr));
+            gap: 18px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .quick-menu-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .quick-menu-grid::-webkit-scrollbar-thumb {
+            background: #fdba74;
+            border-radius: 20px;
+        }
+
+        .quick-menu-card {
+            background: #fff7ed;
+            border: 1px solid #ffedd5;
+            border-radius: 22px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            transition: 0.3s ease;
+            animation: cardPop 0.45s ease-in-out;
+        }
+
+        .quick-menu-card:hover {
+            transform: translateY(-4px);
+            border-color: #fdba74;
+            box-shadow: 0 10px 22px rgba(249, 115, 22, 0.12);
+        }
+
+        .quick-item-content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .quick-item-image {
+            width: 86px;
+            height: 86px;
+            flex-shrink: 0;
+            border-radius: 18px;
+            background: #ffedd5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            overflow: hidden;
+        }
+
+        .quick-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .quick-item-details {
+            min-width: 0;
+        }
+
+        .quick-item-header h3 {
+            font-size: 17px;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .quick-category {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .quick-price {
+            color: #f97316;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .quick-description {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .quick-add-btn {
+            min-width: 78px;
+            border: 1px solid #f97316;
+            background: white;
+            color: #f97316;
+            padding: 12px 15px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .quick-add-btn:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(249, 115, 22, 0.20);
+        }
+
+        .quick-empty {
+            grid-column: 1 / -1;
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 22px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        #new-order {
+            animation: cardPop 0.5s ease-in-out;
+            position: sticky;
+            top: 25px;
+            height: fit-content;
+        }
+
+        .pos-control-box {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 18px;
+        }
+
+        .pos-control-label {
+            color: #374151;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .pos-type-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pos-type-btn {
+            flex: 1;
+            border: 1px solid #fed7aa;
+            background: #fff7ed;
+            color: #f97316;
+            padding: 10px 8px;
+            border-radius: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .pos-type-btn:hover,
+        .pos-type-btn.active {
+            background: #f97316;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .table-chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .table-chip {
+            border: 1px solid #fed7aa;
+            background: #fff7ed;
+            color: #f97316;
+            padding: 8px 11px;
+            border-radius: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size: 13px;
+        }
+
+        .table-chip:hover,
+        .table-chip.active {
+            background: #f97316;
+            color: white;
+        }
+
+        .table-input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #fed7aa;
+            border-radius: 14px;
+            outline: none;
+            background: #fff7ed;
+            margin-top: 10px;
+        }
+
+        .hidden-table-input {
+            display: none;
+        }
+
+        .hidden-table-input.show {
+            display: block;
+        }
+
+        .cart-box {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 18px;
+        }
+
+        .cart-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .cart-title-row h3 {
+            font-size: 15px;
+            color: #1f2937;
+        }
+
+        .clear-cart-btn {
+            border: none;
+            background: #fff7ed;
+            color: #dc2626;
+            padding: 7px 11px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size: 12px;
+        }
+
+        .clear-cart-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .cart-items {
+            display: grid;
+            gap: 10px;
+            max-height: 230px;
+            overflow-y: auto;
+        }
+
+        .empty-cart {
+            background: #fff7ed;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .cart-item-row {
+            background: white;
+            border-radius: 16px;
+            padding: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .cart-item-row h4 {
+            color: #1f2937;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-row p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .cart-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .cart-actions button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 10px;
+            background: #ffedd5;
+            color: #f97316;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .cart-actions button:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        .cart-actions span {
+            min-width: 18px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .remove-cart-btn {
+            background: #fee2e2 !important;
+            color: #dc2626 !important;
+        }
+
+        .remove-cart-btn:hover {
+            background: #dc2626 !important;
+            color: white !important;
+        }
+
+        .cart-total-row {
+            margin-top: 10px;
+            background: #fff7ed;
+            border-radius: 14px;
+            padding: 13px;
+            display: flex;
+            justify-content: space-between;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .cart-total-row strong {
+            color: #f97316;
+            font-size: 16px;
+        }
+
+        .note-action-box {
+            margin-bottom: 16px;
+        }
+
+        .add-note-btn {
+            width: 100%;
+            border: none;
+            background: #fff7ed;
+            color: #f97316;
+            padding: 12px;
+            border-radius: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .add-note-btn:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        .note-box {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .note-box.show {
+            display: block;
+        }
+
+        .note-box textarea {
+            width: 100%;
+            height: 75px;
+            resize: none;
+            border: 1px solid #fed7aa;
+            background: #fff7ed;
+            border-radius: 16px;
+            padding: 12px 14px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            padding: 14px;
+            background: #f97316;
+            color: white;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #ea580c;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.28);
+        }
+
+        .orders-section {
+            margin-bottom: 25px;
+        }
+
+        .compact-order-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .compact-order-card {
+            min-height: auto;
+            padding: 14px;
+            border-radius: 18px;
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            animation: cardPop 0.45s ease-in-out;
+            transition: 0.3s ease;
+        }
+
+        .compact-order-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 18px rgba(249, 115, 22, 0.12);
+            border-color: #f97316;
+        }
+
+        .compact-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .compact-order-header h3 {
+            font-size: 17px;
+            color: #1f2937;
+            margin-bottom: 3px;
+        }
+
+        .compact-order-header p {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .compact-order-items {
+            background: white;
+            border-radius: 12px;
+            padding: 9px 10px;
+            margin-bottom: 10px;
+        }
+
+        .compact-order-items p {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+
+        .compact-order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .compact-order-footer strong {
+            color: #f97316;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .compact-order-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .compact-btn {
+            text-decoration: none;
+            background: white;
+            color: #f97316;
+            padding: 7px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .compact-btn:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        .delete-compact-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .compact-note {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+            background: white;
+            padding: 7px 9px;
+            border-radius: 10px;
+        }
+
+        .status-badge {
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .preparing {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .completed {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .empty-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 24px;
+            padding: 35px;
+            text-align: center;
+            grid-column: 1 / -1;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .empty-card h3 {
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .empty-card p {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .queue-panel {
+            margin-top: 25px;
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            animation: pageFade 0.6s ease-in-out;
+        }
+
+        .queue-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(250px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .queue-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 22px;
+            padding: 18px;
+            transition: 0.3s ease;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .queue-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 26px rgba(249, 115, 22, 0.14);
+            border-color: #f97316;
+        }
+
+        .queue-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .queue-top h3 {
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .queue-top p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .queue-badge {
+            padding: 7px 12px;
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: bold;
+            height: fit-content;
+        }
+
+        .queue-badge.pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .queue-badge.preparing {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .queue-details {
+            padding-top: 12px;
+            border-top: 1px solid #fed7aa;
+            margin-bottom: 16px;
+        }
+
+        .queue-details p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .queue-details strong {
+            color: #f97316;
+        }
+
+        .queue-btn {
+            display: block;
+            text-align: center;
+            background: white;
+            color: #f97316;
+            border-radius: 14px;
+            padding: 11px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .queue-btn:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .queue-empty {
+            grid-column: 1 / -1;
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 22px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .billing-ready-section {
+            margin-top: 25px;
+            background: white;
+            padding: 26px;
+            border-radius: 28px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            animation: pageFade 0.6s ease-in-out;
+        }
+
+        .section-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .billing-link {
+            text-decoration: none;
+            color: #f97316;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 11px 16px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 14px;
+            transition: 0.3s ease;
+        }
+
+        .billing-link:hover {
+            background: #f97316;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .billing-ready-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 22px;
+        }
+
+        .billing-ready-card {
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 24px;
+            padding: 18px;
+            transition: 0.3s ease;
+            animation: cardPop 0.5s ease-in-out;
+        }
+
+        .billing-ready-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.16);
+            border-color: #f97316;
+        }
+
+        .billing-ready-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .receipt-icon {
+            width: 58px;
+            height: 58px;
+            background: #ffedd5;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .ready-badge {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .billing-order-info h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .billing-order-info p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .billing-order-info strong {
+            color: #f97316;
+        }
+
+        .billing-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 14px;
+            background: white;
+            border-radius: 15px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .billing-total strong {
+            color: #f97316;
+            font-size: 17px;
+        }
+
+        .generate-bill-btn {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+            background: #f97316;
+            color: white;
+            padding: 13px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .generate-bill-btn:hover {
+            background: #ea580c;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(249, 115, 22, 0.22);
+        }
+
+        .billing-empty {
+            grid-column: 1 / -1;
+            background: #fff7ed;
+            border: 1px dashed #fdba74;
+            border-radius: 22px;
+            text-align: center;
+            padding: 32px;
+        }
+
+        .empty-billing-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        @media(max-width: 1250px) {
+            .pos-layout {
+                grid-template-columns: 1fr;
+            }
+
+            #new-order {
+                position: static;
+            }
+
+            .quick-menu-grid,
+            .compact-order-grid,
+            .queue-grid,
+            .billing-ready-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 1100px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        @media(max-width: 750px) {
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .top-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .search-input,
+            .add-btn,
+            .quick-menu-search {
+                width: 100%;
+            }
+
+            .panel-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .quick-menu-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quick-add-btn {
+                width: 100%;
+            }
+
+            .cart-item-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pos-type-buttons {
+                flex-direction: column;
+            }
+
+            .compact-order-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .compact-order-actions {
+                width: 100%;
+            }
+
+            .compact-btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">☕</div>
+            <div>
+                <h2>CafePro</h2>
+                <p>Management System</p>
+            </div>
+        </div>
+
+        <div class="nav">
+            <a href="{% url 'home' %}">🏠 Home</a>
+            <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+            <a href="{% url 'orders' %}" class="active">🛒 Orders</a>
+            <a href="{% url 'menu' %}">☕ Menu</a>
+            <a href="{% url 'billing' %}">🧾 Billing</a>
+            <a href="{% url 'inventory' %}">📦 Inventory</a>
+            <a href="{% url 'staff' %}">👥 Staff</a>
+            <a href="{% url 'reports' %}">📈 Reports</a>
+            <a href="/admin/">⚙ Admin Panel</a>
+        </div>
+
+        <div class="sidebar-box">
+            <h4>POS Order Panel</h4>
+            <p>Select menu items, build a cart, and send orders directly to the kitchen.</p>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <div class="welcome">
+                <p>Point of Sale</p>
+                <h1>Orders</h1>
+            </div>
+
+            <div class="top-actions">
+                <input type="text" class="search-input" placeholder="Search orders...">
+                <a href="#new-order" class="add-btn">Current Order</a>
+            </div>
+        </div>
+
+        <div class="order-tabs">
+            <a href="{% url 'orders' %}" class="{% if not selected_status %}active{% endif %}">All Orders</a>
+
+            <a href="{% url 'orders' %}?status=Pending"
+               class="{% if selected_status == 'Pending' %}active{% endif %}">
+                Pending ({{ pending_count }})
+            </a>
+
+            <a href="{% url 'orders' %}?status=Preparing"
+               class="{% if selected_status == 'Preparing' %}active{% endif %}">
+                Preparing ({{ preparing_count }})
+            </a>
+
+            <a href="{% url 'orders' %}?status=Completed"
+               class="{% if selected_status == 'Completed' %}active{% endif %}">
+                Completed ({{ completed_count }})
+            </a>
+
+            <a href="{% url 'orders' %}?status=Cancelled"
+               class="{% if selected_status == 'Cancelled' %}active{% endif %}">
+                Cancelled ({{ cancelled_count }})
+            </a>
+        </div>
+
+        <section class="pos-layout">
+
+            <div class="panel">
+                <div class="panel-title">
+                    <div>
+                        <h2>Menu Items</h2>
+                        <p class="quick-menu-subtitle">
+                            Choose items and add them to the current order.
+                        </p>
+                    </div>
+
+                    <input type="text" id="menuSearch" class="quick-menu-search" placeholder="Search menu items...">
+                </div>
+
+                <div class="quick-menu-tabs">
+                    <button type="button" class="quick-tab active" data-category="All">All Items</button>
+                    <button type="button" class="quick-tab" data-category="Coffee">Coffee</button>
+                    <button type="button" class="quick-tab" data-category="Tea">Tea</button>
+                    <button type="button" class="quick-tab" data-category="Snacks">Snacks</button>
+                    <button type="button" class="quick-tab" data-category="Bakery">Bakery</button>
+                    <button type="button" class="quick-tab" data-category="Cold Drinks">Cold Drinks</button>
+                </div>
+
+                <div class="quick-menu-grid" id="quickMenuGrid">
+                    {% for item in menu_items %}
+                        <div class="quick-menu-card"
+                             data-category="{{ item.category }}"
+                             data-name="{{ item.item_name|lower }}">
+
+                            <div class="quick-item-content">
+                                <div class="quick-item-image">
+                                    {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="{{ item.item_name }}">
+                                    {% else %}
+                                        ☕
+                                    {% endif %}
+                                </div>
+
+                                <div class="quick-item-details">
+                                    <div class="quick-item-header">
+                                        <h3>{{ item.item_name }}</h3>
+                                    </div>
+
+                                    <p class="quick-category">{{ item.category }}</p>
+                                    <p class="quick-price">Rs. {{ item.price }}</p>
+
+                                    {% if item.description %}
+                                        <p class="quick-description">{{ item.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <button type="button"
+                                    class="quick-add-btn"
+                                    onclick="addToCart('{{ item.id }}', '{{ item.item_name|escapejs }}', '{{ item.price }}')">
+                                ADD
+                            </button>
+                        </div>
+                    {% empty %}
+                        <div class="quick-empty">
+                            <h3>No Available Menu Items</h3>
+                            <p>Add available items from the Menu page first.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="panel" id="new-order">
+                <div class="panel-title">
+                    <div>
+                        <h2>Current Order</h2>
+                        <p style="color:#6b7280; font-size:14px; margin-top:6px;">
+                            Add menu items and send the order to kitchen.
+                        </p>
+                    </div>
+                </div>
+
+                <form method="POST" id="posOrderForm">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="cart_data" id="cartData">
+                    <input type="hidden" name="customer_name" value="Walk-in Customer">
+                    <input type="hidden" name="order_type" id="orderTypeInput" value="Dine-in">
+                    <input type="hidden" name="note" id="orderNoteInput">
+
+                    <div class="pos-control-box">
+                        <p class="pos-control-label">Order Type</p>
+
+                        <div class="pos-type-buttons">
+                            <button type="button"
+                                    class="pos-type-btn active"
+                                    onclick="setOrderType(this, 'Dine-in')">
+                                🍽️ Dine-in
+                            </button>
+
+                            <button type="button"
+                                    class="pos-type-btn"
+                                    onclick="setOrderType(this, 'Takeaway')">
+                                🛍️ Takeaway
+                            </button>
+
+                            <button type="button"
+                                    class="pos-type-btn"
+                                    onclick="setOrderType(this, 'Online')">
+                                🌐 Online
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pos-control-box">
+                        <p class="pos-control-label">Table / Token</p>
+
+                        <div class="table-chip-row">
+                            <button type="button" class="table-chip" onclick="setTableNumber(this, 'Table 1')">Table 1</button>
+                            <button type="button" class="table-chip" onclick="setTableNumber(this, 'Table 2')">Table 2</button>
+                            <button type="button" class="table-chip" onclick="setTableNumber(this, 'Table 3')">Table 3</button>
+                            <button type="button" class="table-chip" onclick="setTableNumber(this, 'Takeaway')">Takeaway</button>
+                            <button type="button" class="table-chip custom-chip" onclick="showCustomTableInput(this)">+ Custom</button>
+                        </div>
+
+                        <input type="text"
+                               name="table_number"
+                               id="tableNumberInput"
+                               class="table-input hidden-table-input"
+                               placeholder="Enter table/token no.">
+                    </div>
+
+                    <div class="cart-box">
+                        <div class="cart-title-row">
+                            <h3>Selected Items</h3>
+                            <button type="button" class="clear-cart-btn" onclick="clearCart()">Clear</button>
+                        </div>
+
+                        <div id="cartItems" class="cart-items">
+                            <div class="empty-cart">
+                                No items selected yet.
+                            </div>
+                        </div>
+
+                        <div class="cart-total-row">
+                            <span>Subtotal</span>
+                            <strong id="cartTotal">Rs. 0.00</strong>
+                        </div>
+                    </div>
+
+                    <div class="note-action-box">
+                        <button type="button" class="add-note-btn" onclick="toggleNoteBox()">
+                            + Add Note
+                        </button>
+
+                        <div id="noteBox" class="note-box">
+                            <textarea id="visibleNoteInput"
+                                      placeholder="Example: less sugar, no ice, urgent order"
+                                      oninput="updateOrderNote()"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Send to Kitchen</button>
+                </form>
+            </div>
+
+        </section>
+
+        <section class="panel orders-section">
+            <div class="panel-title">
+                <h2>Order List</h2>
+
+                <select class="filter">
+                    <option>Filter by Status</option>
+                    <option>Pending</option>
+                    <option>Preparing</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                </select>
+            </div>
+
+            <div class="compact-order-grid">
+                {% for order in orders %}
+                    <div class="compact-order-card">
+
+                        <div class="compact-order-header">
+                            <div>
+                                <h3>ORD-{{ order.id }}</h3>
+
+                                <p>
+                                    {% if order.table_number %}
+                                        {{ order.table_number }}
+                                    {% else %}
+                                        {{ order.order_type }}
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            {% if order.status == "Pending" %}
+                                <span class="status-badge pending">{{ order.status }}</span>
+                            {% elif order.status == "Preparing" %}
+                                <span class="status-badge preparing">{{ order.status }}</span>
+                            {% elif order.status == "Completed" %}
+                                <span class="status-badge completed">{{ order.status }}</span>
+                            {% elif order.status == "Cancelled" %}
+                                <span class="status-badge cancelled">{{ order.status }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="compact-order-items">
+                            {% if order.order_items.all %}
+                                {% for order_item in order.order_items.all %}
+                                    <p>
+                                        {{ order_item.menu_item.item_name }} × {{ order_item.quantity }}
+                                    </p>
+                                {% endfor %}
+                            {% elif order.item %}
+                                <p>{{ order.item.item_name }} × {{ order.quantity }}</p>
+                            {% else %}
+                                <p>No item selected</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="compact-order-footer">
+                            <strong>Rs. {{ order.total_price }}</strong>
+
+                            <div class="compact-order-actions">
+                                <a href="#" class="compact-btn">View</a>
+                                <a href="{% url 'edit_order' order.id %}" class="compact-btn">Edit</a>
+                                <a href="{% url 'delete_order' order.id %}" class="compact-btn delete-compact-btn">Delete</a>
+                            </div>
+                        </div>
+
+                        {% if order.note %}
+                            <p class="compact-note">Note: {{ order.note }}</p>
+                        {% endif %}
+
+                    </div>
+                {% empty %}
+                    <div class="empty-card">
+                        <div class="empty-icon">🛒</div>
+                        <h3>No Orders Added Yet</h3>
+                        <p>Add menu items from the POS cart and send them to kitchen.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="queue-panel">
+            <div class="panel-title">
+                <h2>Kitchen Queue</h2>
+
+                <select class="filter">
+                    <option>Active Orders</option>
+                    <option>Pending</option>
+                    <option>Preparing</option>
+                </select>
+            </div>
+
+            <div class="queue-grid">
+                {% for order in kitchen_orders %}
+                    <div class="queue-card">
+                        <div class="queue-top">
+                            <div>
+                                <h3>ORD-{{ order.id }}</h3>
+                                <p>{{ order.customer_name }}</p>
+
+                                {% if order.table_number %}
+                                    <p>Table: {{ order.table_number }}</p>
+                                {% endif %}
+                            </div>
+
+                            {% if order.status == "Pending" %}
+                                <span class="queue-badge pending">{{ order.status }}</span>
+                            {% elif order.status == "Preparing" %}
+                                <span class="queue-badge preparing">{{ order.status }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="queue-details">
+                            {% if order.order_items.all %}
+                                {% for order_item in order.order_items.all %}
+                                    <p>
+                                        <strong>Item:</strong>
+                                        {{ order_item.menu_item.item_name }} × {{ order_item.quantity }}
+                                    </p>
+                                {% endfor %}
+                            {% elif order.item %}
+                                <p><strong>Item:</strong> {{ order.item.item_name }}</p>
+                                <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                            {% else %}
+                                <p><strong>Item:</strong> No item selected</p>
+                            {% endif %}
+
+                            <p><strong>Type:</strong> {{ order.order_type }}</p>
+
+                            {% if order.note %}
+                                <p><strong>Note:</strong> {{ order.note }}</p>
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'edit_order' order.id %}" class="queue-btn">
+                            Update Status
+                        </a>
+                    </div>
+                {% empty %}
+                    <div class="queue-empty">
+                        <h3>No Active Kitchen Orders</h3>
+                        <p>Pending and preparing orders will appear here.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="billing-ready-section">
+            <div class="panel-title">
+                <div>
+                    <h2>Completed Orders Ready for Billing</h2>
+                    <p class="section-subtitle">
+                        Completed orders without a generated bill will appear here.
+                    </p>
+                </div>
+
+                <a href="{% url 'billing' %}" class="billing-link">View All Bills</a>
+            </div>
+
+            <div class="billing-ready-grid">
+                {% for order in billing_ready_orders %}
+                    <div class="billing-ready-card">
+                        <div class="billing-ready-top">
+                            <div class="receipt-icon">🧾</div>
+                            <span class="ready-badge">Ready</span>
+                        </div>
+
+                        <div class="billing-order-info">
+                            <h3>ORD-{{ order.id }}</h3>
+                            <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+
+                            {% if order.table_number %}
+                                <p><strong>Table:</strong> {{ order.table_number }}</p>
+                            {% endif %}
+
+                            {% if order.order_items.all %}
+                                <p><strong>Items:</strong></p>
+                                {% for order_item in order.order_items.all %}
+                                    <p>
+                                        {{ order_item.menu_item.item_name }} × {{ order_item.quantity }}
+                                    </p>
+                                {% endfor %}
+                            {% elif order.item %}
+                                <p><strong>Item:</strong> {{ order.item.item_name }}</p>
+                                <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                            {% else %}
+                                <p><strong>Item:</strong> No item selected</p>
+                            {% endif %}
+
+                            <p><strong>Order Type:</strong> {{ order.order_type }}</p>
+                        </div>
+
+                        <div class="billing-total">
+                            <span>Total Amount</span>
+                            <strong>Rs. {{ order.total_price }}</strong>
+                        </div>
+
+                        <a href="{% url 'billing' %}?order={{ order.id }}" class="generate-bill-btn">
+                            Generate Bill
+                        </a>
+                    </div>
+                {% empty %}
+                    <div class="billing-empty">
+                        <div class="empty-billing-icon">🧾</div>
+                        <h3>No Orders Ready for Billing</h3>
+                        <p>Completed orders that have not been billed will appear here.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+    let cart = [];
+    let selectedCategory = "All";
+
+    function addToCart(itemId, itemName, itemPrice) {
+        const price = parseFloat(itemPrice);
+        const existingItem = cart.find(item => item.id === itemId);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                id: itemId,
+                name: itemName,
+                price: price,
+                quantity: 1
+            });
+        }
+
+        renderCart();
+    }
+
+    function increaseQty(itemId) {
+        const item = cart.find(item => item.id === itemId);
+
+        if (item) {
+            item.quantity += 1;
+            renderCart();
+        }
+    }
+
+    function decreaseQty(itemId) {
+        const item = cart.find(item => item.id === itemId);
+
+        if (item) {
+            item.quantity -= 1;
+
+            if (item.quantity <= 0) {
+                cart = cart.filter(cartItem => cartItem.id !== itemId);
+            }
+
+            renderCart();
+        }
+    }
+
+    function removeItem(itemId) {
+        cart = cart.filter(item => item.id !== itemId);
+        renderCart();
+    }
+
+    function clearCart() {
+        cart = [];
+        renderCart();
+    }
+
+    function renderCart() {
+        const cartItemsBox = document.getElementById("cartItems");
+        const cartTotal = document.getElementById("cartTotal");
+        const cartData = document.getElementById("cartData");
+
+        if (!cartItemsBox || !cartTotal || !cartData) {
+            return;
+        }
+
+        if (cart.length === 0) {
+            cartItemsBox.innerHTML = `
+                <div class="empty-cart">
+                    No items selected yet.
+                </div>
+            `;
+
+            cartTotal.innerText = "Rs. 0.00";
+            cartData.value = "";
+            return;
+        }
+
+        let total = 0;
+
+        cartItemsBox.innerHTML = cart.map(item => {
+            const lineTotal = item.price * item.quantity;
+            total += lineTotal;
+
+            return `
+                <div class="cart-item-row">
+                    <div>
+                        <h4>${item.name}</h4>
+                        <p>Rs. ${item.price.toFixed(2)} × ${item.quantity}</p>
+                    </div>
+
+                    <div class="cart-actions">
+                        <button type="button" onclick="decreaseQty('${item.id}')">−</button>
+                        <span>${item.quantity}</span>
+                        <button type="button" onclick="increaseQty('${item.id}')">+</button>
+                        <button type="button" class="remove-cart-btn" onclick="removeItem('${item.id}')">×</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        cartTotal.innerText = "Rs. " + total.toFixed(2);
+        cartData.value = JSON.stringify(cart);
+    }
+
+    function setOrderType(button, orderType) {
+        const orderTypeInput = document.getElementById("orderTypeInput");
+
+        if (orderTypeInput) {
+            orderTypeInput.value = orderType;
+        }
+
+        document.querySelectorAll(".pos-type-btn").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+    }
+
+    function setTableNumber(button, tableNumber) {
+        const tableInput = document.getElementById("tableNumberInput");
+
+        if (tableInput) {
+            tableInput.value = tableNumber;
+            tableInput.classList.remove("show");
+        }
+
+        document.querySelectorAll(".table-chip").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+    }
+
+    function showCustomTableInput(button) {
+        const tableInput = document.getElementById("tableNumberInput");
+
+        if (tableInput) {
+            tableInput.classList.add("show");
+            tableInput.value = "";
+            tableInput.focus();
+        }
+
+        document.querySelectorAll(".table-chip").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+    }
+
+    function toggleNoteBox() {
+        const noteBox = document.getElementById("noteBox");
+
+        if (noteBox) {
+            noteBox.classList.toggle("show");
+        }
+    }
+
+    function updateOrderNote() {
+        const visibleNote = document.getElementById("visibleNoteInput");
+        const hiddenNote = document.getElementById("orderNoteInput");
+
+        if (visibleNote && hiddenNote) {
+            hiddenNote.value = visibleNote.value;
+        }
+    }
+
+    function filterMenuItems() {
+        const menuSearch = document.getElementById("menuSearch");
+        const menuCards = document.querySelectorAll(".quick-menu-card");
+        const searchValue = menuSearch ? menuSearch.value.toLowerCase() : "";
+
+        menuCards.forEach(card => {
+            const cardCategory = card.getAttribute("data-category");
+            const cardName = card.getAttribute("data-name");
+
+            const matchesCategory =
+                selectedCategory === "All" || cardCategory === selectedCategory;
+
+            const matchesSearch =
+                cardName && cardName.includes(searchValue);
+
+            if (matchesCategory && matchesSearch) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const posForm = document.getElementById("posOrderForm");
+        const menuSearch = document.getElementById("menuSearch");
+        const quickTabs = document.querySelectorAll(".quick-tab");
+
+        if (posForm) {
+            posForm.addEventListener("submit", function(event) {
+                if (cart.length === 0) {
+                    event.preventDefault();
+                    alert("Please add at least one menu item before sending to kitchen.");
+                }
+            });
+        }
+
+        quickTabs.forEach(tab => {
+            tab.addEventListener("click", function() {
+                quickTabs.forEach(t => t.classList.remove("active"));
+                this.classList.add("active");
+
+                selectedCategory = this.getAttribute("data-category");
+                filterMenuItems();
+            });
+        });
+
+        if (menuSearch) {
+            menuSearch.addEventListener("input", filterMenuItems);
+        }
+    });
+</script>
+
+</body>
+</html>
