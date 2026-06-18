@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get("django-insecure-ur6#oiuaxxrbgb((_49ym9tl-@xv6($a8fz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['cafe_project.onrender.com']
+ALLOWED_HOSTS = ['https://cafe-project-n607.onrender.com']
 
 
 # Application definition
