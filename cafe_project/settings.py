@@ -13,6 +13,9 @@ import pymysql
 pymysql.install_as_MySQLdb()
 from pathlib import Path
 import os
+
+from dotenv import load_dotenv
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,12 +24,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("django-insecure-ur6#oiuaxxrbgb((_49ym9tl-@xv6($a8fz$u1&z#7pbi5p)r3")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['https://cafe-project-n607.onrender.com']
+DEBUG = True
+
+
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'cafe-project-n607.onrender.com',
+]
 
 
 # Application definition

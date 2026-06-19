@@ -1,0 +1,4 @@
+.env
+cafe_project/.env
+__pycache__/
+*.pyc
